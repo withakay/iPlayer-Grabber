@@ -1,5 +1,7 @@
 var Grabber = {};
 
+Grabber.MAX_ACTIVE_DOWNLOADS = 4;
+
 Grabber.init = function() {	
 	
 	this.downloadQueue = new DownloadQueue();
@@ -73,11 +75,12 @@ Grabber.initEventBindings = function() {
 	
 	$(document).bind("DOWNLOAD_ADDED_TO_QUEUE", function(e, episode) {
 		Grabber.createDownloadWidget(episode);
-		Grabber.updateDownloadList();
+		Grabber.updateDownloadSummary();
 	});
 	
 	$(document).bind("DOWNLOAD_REMOVED_FROM_QUEUE", function(e, episode) {
 		Grabber.notify(episode.name + "has downloaded.");
+		Grabber.updateDownloadSummary();
 	});
 };
 
@@ -95,7 +98,7 @@ Grabber.queueEpisode = function(episode) {
 Grabber.queueEpisodeDialog = function(episode) {
 	//var b = $("<button>Add '" + data.name + "' to the download queue?</button>");
 	var b = $("<a id='download-button' href='#'>Add '" + episode.name + "' to the download queue?</a>");
-	$(b).button();
+	$(b).button({ icons: {primary:'ui-icon-triangle-1-s'} });
 	$("#bottom-panel").append(b);
 	$(b).animate({
 	    opacity: 'show'
@@ -115,9 +118,11 @@ Grabber.createDownloadWidget = function(episode) {
 	var w = $("<div id=\"dlw-" + episode.pid + "\" class=\"download-widget\"></div>");
 	var t = $("<span id=\"dlt-" + episode.pid + "\" class=\"download-title\">" + episode.name + "</span>");
 	var p = $("<div id=\"pb-" + episode.pid + "\"></div>");
+	//var b = $("<a href=\"#\" class=\"ui-state-default ui-corner-all\"><span class=\"ui-icon ui-icon-close-thick\" id=\"dlb-"+ episode.pid + "\"></span></a>");
 	$(p).append(t);
 	$(p).progressbar({value: 0});
 	$(w).append(p);
+	//$(w).append(b);
 	$("#download-list").append(w);
 	$(w).animate({
 	    opacity: 'show'
@@ -145,6 +150,13 @@ Grabber.notify = function(message) {
 
 Grabber.toggleDownloadList = function() {
 	$("#download-list").toggle();
+};
+
+Grabber.updateDownloadSummary = function() {
+	var message = this.downloadQueue.count() > 1 ? 
+		this.downloadQueue.count() + " queued downloads" : 
+		this.downloadQueue.count() + " queued download";
+	$("#download-summary").text(message);
 };
 
 $(document).ready(function() {

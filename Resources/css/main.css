@@ -2,8 +2,14 @@ body {
 	background-color:#1c1c1c;
 	margin:0;
 	font-size: 10px;
-	font-family: Verdana, Helvetica, Arial, sans-serif; font-size: 1.1em;
+	font-family: Arial, Verdana, Helvetica, Arial, sans-serif; 
+	font-size: 1.1em;
+	color: #fff;
 	
+}
+
+div {
+	font-size: 0.9em;
 }
 
 #iframe-container {	
@@ -33,6 +39,7 @@ body {
 	padding-right: 44px;
 	margin-top: auto;
 	margin-bottom: auto;
+	font-size: 0.6em;
 	/*text-shadow: 1px 1px 1px rgba(255,255,255, .4); */
 }
 
@@ -72,7 +79,7 @@ body {
 }
 
 .download-widget .download-title {
-	font-size: 0.7em;
+	font-size: 0.5em;
 	font-weight: bold;
 	color: white;
 	text-overflow: ellipsis-word;

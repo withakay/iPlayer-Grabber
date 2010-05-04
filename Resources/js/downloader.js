@@ -10,11 +10,11 @@ function Downloader(episode) {
 	this.line = "";
 	this.isDownloading = false;
 	this.process;
-	console.info(Titanium.JSON.stringify(episode));
+	
 };
 
 Downloader.prototype.start = function() {	
-	
+	console.info(Titanium.JSON.stringify(this.episode));
 	var that = this;
 	var path_to_iplayer = Titanium.Filesystem.getResourcesDirectory() + "/iplayer-dl/bin/iplayer-dl";
 	
