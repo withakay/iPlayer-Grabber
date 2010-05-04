@@ -1,54 +1,76 @@
-Downloader {};
+/*
 
-Downloader.prototype.download = function(pid) {
-	// Reading the output of a process using the read event.
-	// Win32 needs to run echo and more via cmd.exe
+https://developer.appcelerator.com/apidoc/desktop/1.0/Titanium.Process-module
+
+*/
+
+function Downloader(episode) {
+	this.episode = episode;
+	this.progress = 0;
+	this.line = "";
+	this.isDownloading = false;
+	this.process;
+	console.info(Titanium.JSON.stringify(episode));
+};
+
+Downloader.prototype.start = function() {	
+	
+	var that = this;
 	var path_to_iplayer = Titanium.Filesystem.getResourcesDirectory() + "/iplayer-dl/bin/iplayer-dl";
 	
 	var iplayer_script = Titanium.Filesystem.getFile(path_to_iplayer);
 
     if (iplayer_script.exists()) {
-        //alert('exists');
+        console.log(iplayer_script + ' exists');
     } else {
+		console.error(iplayer_script + ' DOES NOT exist');
         alert("error iplayer-dl script does not exist!");
     }
 	
-	//"cd '" + Titanium.Filesystem.getResourcesDirectory() + "/iplayer-dl'", 
-	var my_args = ["/usr/bin/ruby", "-I"+Titanium.Filesystem.getResourcesDirectory()+"/iplayer-dl/lib", path_to_iplayer, pid, "--download-path=" + Titanium.Filesystem.getDesktopDirectory()];
-	//var my_args = ["ruby -Ilib ", "'" + path_to_iplayer + "'", pid];
-	//var my_args = ["/bin/ls", "-la"];
-	//var my_args = ["/usr/bin/ruby", "-v"];
-	
-	alert(my_args.join(" "));
+	var my_args = [
+		"/usr/bin/ruby", 
+		"-I" + Titanium.Filesystem.getResourcesDirectory() + "/iplayer-dl/lib", 
+		path_to_iplayer, 
+		this.episode.pid, 
+		"--download-path=" + Titanium.Filesystem.getDesktopDirectory()
+	];
+		
+	this.process = Titanium.Process.createProcess({
+		args: my_args
+    });
 
-	//alert(Titanium.Filesystem.getResourcesDirectory());
-	
-	
-	var my_process = Titanium.Process.createProcess({
-	        args: my_args
-	    });
+	console.info(this.process.toString());
 
-	alert(my_process.toString());
-	alert(my_process.getEnvironment());
-
-	my_process.setOnReadLine(function(data) {
-	        alert(data.toString());
-	    });
+	this.process.setOnReadLine(function(data) {
+		that.line = data.toString();
+		//console.info(Titanium.JSON.stringify(that.episode));
+	    //console.info("downloaded " + data.toString() + " of " + that.episode.name);
+		that.progress = parseInt(data.toString(), "10");
+		if(that.progress) {
+			$(document).trigger('DOWNLOAD_PROGRESSED', {episode: that.episode, progress: that.progress});
+		}
+	});
 	/*	
 	my_process.setOnRead(function(data) {
 	        alert(data.toString());
 	    });
 	*/
-	my_process.setOnExit(function(data) {
-	        alert("exited");
-	    });
-	/*
-	my_process.addEventListener(Titanium.READ, function(event)
-	{
-	    // event.data will be a Bytes object with the output data.
-	    alert(event.data.toString());
-	});*/
+	this.process.setOnExit(function(data) {
+        console.log("process exited with " + data.toString());
+		that.isDownloading = false;
+		if(that.progress === 100) {
+			$(document).trigger('DOWNLOAD_COMPLETED', that.episode, that.progress);
+		} else {
+			$(document).trigger('DOWNLOAD_FAILED', {episode: that.episode, line: that.line});
+		}
+	});
 		
-	my_process.launch();
+	this.process.launch();	
+	that.isDownloading = true;
 	
+	$(document).trigger('DOWNLOAD_STARTED', that.episode);	
+};
+
+Downloader.prototype.stop = function() {
+	this.process.kill();
 };

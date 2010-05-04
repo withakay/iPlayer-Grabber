@@ -1,15 +1,35 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
 	<head>
-		
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.0/build/cssreset/reset-min.css">
 		<script src="js/jquery-1.4.2.min.js" type="text/javascript"/>
-		<script src="js/main.js" type="text/javascript"/>
+		<script src="js/jquery-ui-1.8.1.iplayer.min.js" type="text/javascript" charset="utf-8"></script>		
+		<link rel="stylesheet" href="css/custom-theme/jquery-ui-1.8.1.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+		<script src="js/main.js" type="text/javascript"></script>
+		<script src="js/download-queue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/downloader.js" type="text/javascript" charset="utf-8"></script>
+		
+		<link rel="stylesheet" href="css/main.css" type="text/css" media="screen" title="no title" charset="utf-8">
 		
 		<title></title>
 	</head>
-	<body style="background-color:#1c1c1c;margin:0">
-				
-		<iframe id="my-iframe" src="http://bbc.co.uk/iplayer" style="width: 1000px; height: 800px; position:absolute;left:5px;top:5px; z-index: 1;"></iframe>
+	<body>
+		<div id="iframe-container">
+			<iframe id="my-iframe" src="http://bbc.co.uk/iplayer"></iframe>
+		</div>
+		
+		<div id="bottom-panel">
+			
+					
+		</div>
+		
+		<div id="download-summary">
+			No active downloads
+		</div>
+		
+		<div id="download-list" class="ui-widget-content">
+			<div id="download-list-header" class="ui-widget-header">Downloads</div>
+		</div>
 		
 	</body>
 </html>

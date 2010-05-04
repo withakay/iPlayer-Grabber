@@ -13,15 +13,15 @@
 <id>initial</id>
 <title>iPlayer Grabber v2</title>
 <url>app://index.html</url>
-<width>1020</width>
-<max-width>3000</max-width>
-<min-width>0</min-width>
+<width>990</width>
+<max-width>990</max-width>
+<min-width>500</min-width>
 <height>820</height>
 <max-height>3000</max-height>
-<min-height>0</min-height>
+<min-height>200</min-height>
 <fullscreen>false</fullscreen>
 <resizable>true</resizable>
-<chrome scrollbars="true">true</chrome>
+<chrome scrollbars="false">true</chrome>
 <maximizable>true</maximizable>
 <minimizable>true</minimizable>
 <closeable>true</closeable>

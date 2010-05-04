@@ -36,7 +36,8 @@ DownloadQueue.prototype.add = function(episode) {
 	this.q.push(episode);
 	if(this.isDownloading === false) {
 		this.downloadNext();
-	}	
+	}
+	$(document).trigger("DOWNLOAD_ADDED_TO_QUEUE", episode);
 	return true;
 };
 
@@ -44,10 +45,11 @@ DownloadQueue.prototype.remove = function(episode) {
 	for (var i=0; i < this.q.length; i++) {
 		if(this.q[i].pid === episode.pid) {
 			// remove 
-			this.q = this.q.splice(i, 1);
+			this.q.splice(i, 1);
 			return true;
 		}
 	}
+	$(document).trigger("DOWNLOAD_REMOVED_FROM_QUEUE", episode);
 	return false;
 };
 

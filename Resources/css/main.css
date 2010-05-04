@@ -1,6 +1,9 @@
 body {
 	background-color:#1c1c1c;
 	margin:0;
+	font-size: 10px;
+	font-family: Verdana, Helvetica, Arial, sans-serif; font-size: 1.1em;
+	
 }
 
 #iframe-container {	
@@ -17,20 +20,66 @@ body {
 }
 
 #bottom-panel {
-	-webkit-border-top-right-radius: 8px;
-	background-color:#1c1c1c;
+	border-top: solid 1px #3c3c3c;
+	background: -webkit-gradient(linear, left top, left bottom, from(#2c2c2c), to(#0c0c0c));
+	/*background-color:#1c1c1c;*/
 	position:absolute; /* positions #footer at bottom of #wrapper */
 	bottom:0;
 	left:0;
-	height:40px;
+	right: 16px;
+	height:32px;
 	width:100%;
 	padding: 4px;
-	padding-right: 12px;
+	padding-right: 44px;
+	margin-top: auto;
+	margin-bottom: auto;
+	/*text-shadow: 1px 1px 1px rgba(255,255,255, .4); */
+}
+
+#download-summary {
+	border-left: solid 1px #2c2c2c;
+	position:absolute; 
+	right: 16px;
+	bottom: 0px;
+	z-index: 30;
+	background: -webkit-gradient(linear, left top, left bottom, from(#2c2c2c), to(#0c0c0c));
+	min-height: 32px;
+	width: 240px;
+	padding: 4px;
+}
+
+#download-list {
+	position:absolute; 
+	right: 16px;
+	bottom: 40px;
+	z-index: 20;
+	background: -webkit-gradient(linear, left top, left bottom, from(#2c2c2c), to(#0c0c0c));
+	min-height: 30px;
+	width: 240px;
+	padding: 4px;
+	display: none;
 }
 
 .download-widget {
-	-webkit-border-top-right-radius: 8px;
-	width: 96px;
+	position:relative; 
+	padding: 2px;
+	width: 232px;
 	height: 32px;
-	float: right;
+}
+
+.download-widget .ui-progressbar { 
+	position:relative; 
+}
+
+.download-widget .download-title {
+	font-size: 0.7em;
+	font-weight: bold;
+	color: white;
+	text-overflow: ellipsis-word;
+	z-index: 99;	
+	position: absolute; 
+	width: 100%; 
+	text-align: center; 
+	line-height: 100%; 
+	padding: 4px;
 }

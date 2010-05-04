@@ -1,31 +1,34 @@
 var Grabber = {};
-var Ti = {fs: Titanium.Filesystem};
 
-Grabber.init = function()
-{
+Grabber.init = function() {	
+	
+	this.downloadQueue = new DownloadQueue();
+	this.initEventBindings();
+	
 	var that = this;
-	this.resourceDir = Ti.fs.getResourcesDirectory();
 	this.iframeLocation = "";		
 	this.iframe = document.getElementById("my-iframe");
+	
+	$("#my-iframe").height($(document).height() - $("#bottom-panel").height());
 
 	$(that.iframe.contentDocument).ready(function() {
 		that.iframeLocation = that.iframe.contentDocument.location.href;
 	});
-	
-	$('#button').click(function() {
-		alert(that.iframe.contentDocument.location.href);
-	});
 		
+	$(window).resize(function () {
+		$("#my-iframe").height($(document).height() - $("#bottom-panel").height());
+	});	
+	
 	var locationChanged = function() {
 		if(that.iframe.contentDocument.location.href !== that.iframeLocation) {
+			$("#bottom-panel #download-button").remove();
 			that.iframeLocation = that.iframe.contentDocument.location.href;
 			if(that.iframeLocation.indexOf("episode") > -1) {
-				alert("displaying an episode: " + that.iframeLocation);
+				//alert("displaying an episode: " + that.iframeLocation);
 				var parts = that.iframeLocation.split("/");
 				for (var i=0; i < parts.length; i++) {
 					if(parts[i] === "episode") {
-						//window.call_to_script(parts[i+1]);
-						alert("episode: " + parts[i+1] );
+						$(document).trigger('EPISODE_DETECTED', {pid: parts[i+1], name: parts[i+2].replace(/_/gi, " ")});						
 						break;
 					}
 				}
@@ -34,65 +37,116 @@ Grabber.init = function()
 	};
 	
 	var intervalId = setInterval(locationChanged, 2000);
-};
-
-var execProcess = function() {
-	// Reading the output of a process using the read event.
-	// Win32 needs to run echo and more via cmd.exe
-	var path_to_iplayer = Titanium.Filesystem.getResourcesDirectory() + "/iplayer-dl/bin/iplayer-dl";
 	
-	var iplayer_script = Titanium.Filesystem.getFile(path_to_iplayer);
-
-    if (iplayer_script.exists()) {
-        //alert('exists');
-    } else {
-        iplayer_script.write("does not exist");
-    }
-	
-	
-	var pid = "b008h368";
-	//"cd '" + Titanium.Filesystem.getResourcesDirectory() + "/iplayer-dl'", 
-	var my_args = ["/usr/bin/ruby", "-I"+Titanium.Filesystem.getResourcesDirectory()+"/iplayer-dl/lib", path_to_iplayer, pid, "--download-path=" + Titanium.Filesystem.getDesktopDirectory()];
-	//var my_args = ["ruby -Ilib ", "'" + path_to_iplayer + "'", pid];
-	//var my_args = ["/bin/ls", "-la"];
-	//var my_args = ["/usr/bin/ruby", "-v"];
-	
-	alert(my_args.join(" "));
-
-	//alert(Titanium.Filesystem.getResourcesDirectory());
-	
-	
-	var my_process = Titanium.Process.createProcess({
-	        args: my_args
-	    });
-
-	alert(my_process.toString());
-	alert(my_process.getEnvironment());
-
-	my_process.setOnReadLine(function(data) {
-	        alert(data.toString());
-	    });
-	/*	
-	my_process.setOnRead(function(data) {
-	        alert(data.toString());
-	    });
-	*/
-	my_process.setOnExit(function(data) {
-	        alert("exited");
-	    });
-	/*
-	my_process.addEventListener(Titanium.READ, function(event)
-	{
-	    // event.data will be a Bytes object with the output data.
-	    alert(event.data.toString());
-	});*/
-		
-	my_process.launch();
+	$("#download-summary").click(function () {
+		Grabber.toggleDownloadList();
+	});
 	
 };
 
-$(document).ready(function()
-{
+Grabber.initEventBindings = function() {
+	$(document).bind("EPISODE_DETECTED", function(e, data) {
+		Grabber.queueEpisodeDialog(data);
+	});
+	
+	$(document).bind("ADD_EPISODE_TO_DOWNLOAD_QUEUE", function(e, episode) {
+		Grabber.queueEpisode(episode);
+		Grabber.notify(episode.name + "has been queued for download.");
+	});	
+	
+	$(document).bind("DOWNLOAD_STARTED", function(e, episode) {
+		Grabber.notify(episode.name + "has started downloading.");
+	});
+	
+	$(document).bind("DOWNLOAD_PROGRESSED", function(e, data) {
+		Grabber.updateProgress(data.episode, data.progress);
+	});
+	
+	$(document).bind("DOWNLOAD_COMPLETED", function(e, episode) {
+		Grabber.notify(episode.name + "has downloaded.");
+	});
+	
+	$(document).bind("DOWNLOAD_FAILED", function(e, data) {
+		alert("sorry, we couldn't grab this programme. " + data.line);
+		Grabber.notify(episode.name + "has failed to download.");
+	});
+	
+	$(document).bind("DOWNLOAD_ADDED_TO_QUEUE", function(e, episode) {
+		Grabber.createDownloadWidget(episode);
+		Grabber.updateDownloadList();
+	});
+	
+	$(document).bind("DOWNLOAD_REMOVED_FROM_QUEUE", function(e, episode) {
+		Grabber.notify(episode.name + "has downloaded.");
+	});
+};
+
+
+Grabber.queueEpisode = function(episode) {
+	if(Grabber.downloadQueue.add(episode)) {
+		console.log("added " + episode.name);
+	} else {
+		console.log("could not add " + episode.name);
+	}
+	
+};
+
+// show a dialog asking the user if they want to download the detected episode
+Grabber.queueEpisodeDialog = function(episode) {
+	//var b = $("<button>Add '" + data.name + "' to the download queue?</button>");
+	var b = $("<a id='download-button' href='#'>Add '" + episode.name + "' to the download queue?</a>");
+	$(b).button();
+	$("#bottom-panel").append(b);
+	$(b).animate({
+	    opacity: 'show'
+	  }, 1500, 'linear', function() {
+	      //  $(this).after('<div>Animation complete.</div>');
+	  });
+	
+	$(b).click(function() {
+		Grabber.queueEpisode(episode);
+		b.remove();
+	});
+};
+
+Grabber.createDownloadWidget = function(episode) {
+	
+	//var b = $("<button>Add '" + data.name + "' to the download queue?</button>");
+	var w = $("<div id=\"dlw-" + episode.pid + "\" class=\"download-widget\"></div>");
+	var t = $("<span id=\"dlt-" + episode.pid + "\" class=\"download-title\">" + episode.name + "</span>");
+	var p = $("<div id=\"pb-" + episode.pid + "\"></div>");
+	$(p).append(t);
+	$(p).progressbar({value: 0});
+	$(w).append(p);
+	$("#download-list").append(w);
+	$(w).animate({
+	    opacity: 'show'
+	  }, 1500, 'linear', function() {
+	      //  $(this).after('<div>Animation complete.</div>');
+	  });
+	
+};
+
+Grabber.updateProgress = function(episode, progress) {
+	//console.info("downloaded " + progress + "% of " + episode.name);
+	$("#pb-" + episode.pid).progressbar({value: progress});
+};
+
+Grabber.notify = function(message) {
+	if(!this.notifier) {
+		this.notifier = Titanium.Notification.createNotification($(document));
+		//var s = Titanium.Filesystem.getSeparator();
+		var iconPath = Titanium.Filesystem.getResourcesDirectory() + "iplayer-dl/share/pixmaps/iplayer-dl/icon128.png";
+		this.notifier.setIcon(iconPath);
+	}
+	this.notifier.setMessage(message);
+	this.notifier.show();
+};
+
+Grabber.toggleDownloadList = function() {
+	$("#download-list").toggle();
+};
+
+$(document).ready(function() {
 	Grabber.init();
-	execProcess();
 });
