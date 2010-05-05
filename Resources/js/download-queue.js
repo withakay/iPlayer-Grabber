@@ -8,6 +8,7 @@ DownloadQueue.prototype.init = function() {
 	this.queue = [];
 	this.activeDownloads = [];
 	this.isDownloading = false;
+	this.downloaders = [];
 		
 	$(document).bind("DOWNLOAD_STARTED", function(e, episode) {
 		that.isDownloading = true;
@@ -59,6 +60,14 @@ DownloadQueue.prototype.remove = function(episode) {
 			break;
 		}
 	}
+	for (i=0; i < this.downloaders.length; i++) {
+		if(this.downloaders[i].episode.pid === episode.pid) {
+			// remove 
+			this.downloaders[i].stop();
+			this.downloaders.splice(i, 1);
+			break;
+		}
+	}
 	
 	if(ret1) {
 		return true;
@@ -72,7 +81,8 @@ DownloadQueue.prototype.downloadNext = function() {
 	console.log(Titanium.JSON.stringify(this.queue[this.activeDownloads.length]));	
 	this.activeDownloads.push(this.queue[this.activeDownloads.length]);
 	var episode = this.queue[this.activeDownloads.length-1];
-	var d = new Downloader(episode);
+	var d = new Downloader(episode, {DownloadPath: Grabber.DownloadPath});
+	this.downloaders.push(d);
 	d.start();
 };
 

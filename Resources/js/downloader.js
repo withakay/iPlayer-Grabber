@@ -4,11 +4,13 @@ https://developer.appcelerator.com/apidoc/desktop/1.0/Titanium.Process-module
 
 */
 
-function Downloader(episode) {
+function Downloader(episode, options) {
+	this.options = options;
 	this.episode = episode;
 	this.progress = 0;
 	this.line = "";
 	this.isDownloading = false;
+	this.stopRequested = false;
 	this.process;
 	
 };
@@ -32,7 +34,7 @@ Downloader.prototype.start = function() {
 		"-I" + Titanium.Filesystem.getResourcesDirectory() + "/iplayer-dl/lib", 
 		path_to_iplayer, 
 		this.episode.pid, 
-		"--download-path=" + Titanium.Filesystem.getDesktopDirectory()
+		"--download-path=" + this.options.DownloadPath
 	];
 		
 	this.process = Titanium.Process.createProcess({
@@ -58,7 +60,9 @@ Downloader.prototype.start = function() {
 	this.process.setOnExit(function(data) {
         console.log("process exited with " + data.toString());
 		that.isDownloading = false;
-		if(that.progress === 100) {
+		if(that.stopRequested === true) {
+			$(document).trigger('DOWNLOAD_STOPPED', {episode: this.episode});
+		} else if(that.progress === 100) {
 			$(document).trigger('DOWNLOAD_COMPLETED', that.episode, that.progress);
 		} else {
 			$(document).trigger('DOWNLOAD_FAILED', {episode: that.episode, line: that.line});
@@ -72,5 +76,7 @@ Downloader.prototype.start = function() {
 };
 
 Downloader.prototype.stop = function() {
+	this.stopRequested = true;
+	
 	this.process.kill();
 };
