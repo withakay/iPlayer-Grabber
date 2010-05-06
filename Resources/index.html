@@ -1,13 +1,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
 	<head>
-		<script src="js/jquery-1.4.2.min.js" type="text/javascript"/>
+		<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
+		
 		<script src="js/jquery-ui-1.8.1.iplayer.min.js" type="text/javascript" charset="utf-8"></script>		
 		<link rel="stylesheet" href="css/custom-theme/jquery-ui-1.8.1.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
 		<script src="js/main.js" type="text/javascript"></script>
 		<script src="js/download-queue.js" type="text/javascript" charset="utf-8"></script>
 		<script src="js/downloader.js" type="text/javascript" charset="utf-8"></script>
 		<script src="js/jquery-elipsis.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jstorage.js" type="text/javascript" charset="utf-8"></script>
+		
+		
+		<link rel="stylesheet" href="css/ui.checkbox.css" type="text/css" media="screen" title="no title" charset="utf-8">
+		<script src="js/ui.checkbox.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery.bind.js" type="text/javascript" charset="utf-8"></script>
 		
 		<link rel="stylesheet" href="css/main.css" type="text/css" media="screen" title="no title" charset="utf-8">
 		
@@ -29,9 +36,8 @@
 			
 		</div>
 		
-		<div id="preferences-pane">
+		<div id="preferences-pane" class="ui-widget ui-widget-content">
 			<div id="preferences-header" class="ui-accordion-header ui-state-active">Preferences</div>
-			<form id="preferences-form">
 				<table>
 					<tr>
 						<td>Maximum simulations downloads</td>
@@ -48,11 +54,24 @@
 						</td>
 					</tr>
 					<tr>
-						<td>Default download path: </td>
-						<td><span id="download-path"></span><button id="download-path-button">choose...</button></td>
+						<td>Download path. (<span id="download-path"></span>)</td>
+						<td><button id="download-path-button">choose...</button></td>
 					</tr>
-				</table>				
-			</form>
+					<tr>
+						<td>Place downloaded files in a sub-directory named after the title of the programme.</td>
+						<td><input type="checkbox" id="title-subdir-checkbox"></td>
+					</tr>
+					<tr>
+						<td>Also download subtitles.</td>
+						<td><input type="checkbox" id="subtitles-checkbox"></td>
+					</tr>
+					<tr>
+						<td>Specify an HTTP proxy.<br>
+						    Default is taken from the http_proxy environment variable.</td>
+						<td><input type="text" id="proxy-text"></td>
+					</tr>
+				</table>	
+				<button id="save-preferences-button">Save preferences</button>
 		</div>
 		
 		<div id="download-list" class="ui-accordion ui-accordion-icons">

@@ -1,10 +1,10 @@
 #appname:iPlayer Grabber v2
 #appid:co.uk.fader.iplayer-grabber-v2
 #publisher:fader
-#image:default_app_logo.png
+#image:icon128.png
 #url:http://fader.co.uk
 #guid:b5dffe86-5201-4ef6-8391-c12d40431538
-#desc:The cross platform iPlayer downloader 
+#desc:The cross platform iPlayer downloader
 #type:desktop
 runtime:1.0.0
 api:1.0.0

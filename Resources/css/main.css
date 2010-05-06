@@ -134,8 +134,9 @@ div {
 	z-index: 50;
 	background: -webkit-gradient(linear, left top, left bottom, from(#4d4d4d), to(#2c2c2c));
 	padding: 4px;
+	font-size: 0.7em;
 }
 
-#preferences-pane  form{
-	padding: 12px;
+#preferences-pane tr {
+	padding: 4px;
 }

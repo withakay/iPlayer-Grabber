@@ -16,7 +16,7 @@ DownloadQueue.prototype.init = function() {
 	
 	$(document).bind("DOWNLOAD_COMPLETED", function(e, episode) {
 		that.isDownloading = false;
-		if(that.remove(episode) && this.count() < Grabber.MAX_ACTIVE_DOWNLOADS) {
+		if(that.remove(episode) && this.count() < Grabber.MaxActiveDownloads) {
 			that.downloadNext();
 		}		
 	});
@@ -36,7 +36,7 @@ DownloadQueue.prototype.add = function(episode) {
 		}
 	}	
 	this.queue.push(episode);
-	if(this.isDownloading === false || this.count() < Grabber.MAX_ACTIVE_DOWNLOADS) {
+	if(this.isDownloading === false || this.count() < Grabber.MaxActiveDownloads) {
 		this.downloadNext();
 	}
 	$(document).trigger("DOWNLOAD_ADDED_TO_QUEUE", episode);
@@ -78,10 +78,18 @@ DownloadQueue.prototype.remove = function(episode) {
 };
 
 DownloadQueue.prototype.downloadNext = function() {
+
+	var options = {
+		DownloadPath: Grabber.DownloadPath, 
+		CreateTitleSubDir: Grabber.CreateTitleSubDir, 
+		DownloadSubtitles: Grabber.DownloadSubtitles,
+		HTTPProxy: Grabber.HTTPProxy
+	};
+	
 	console.log(Titanium.JSON.stringify(this.queue[this.activeDownloads.length]));	
 	this.activeDownloads.push(this.queue[this.activeDownloads.length]);
 	var episode = this.queue[this.activeDownloads.length-1];
-	var d = new Downloader(episode, {DownloadPath: Grabber.DownloadPath});
+	var d = new Downloader(episode, options);
 	this.downloaders.push(d);
 	d.start();
 };
