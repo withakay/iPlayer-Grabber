@@ -1,0 +1,1 @@
+"/Library/Application Support/Titanium/sdk/osx/1.0.0/tibuild.py" -d ~/Code/appcelerator/iPlayer-Grabber/dist/osx -s "/Library/Application Support/Titanium" -r -a "/Library/Application Support/Titanium/sdk/osx/1.0.0" . -t bundled
