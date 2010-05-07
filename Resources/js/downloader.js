@@ -28,10 +28,7 @@ function Downloader(episode, options) {
 	//alert(Titanium.Platform.name);
 	
 	//default ruby path on OS X
-	this.rubyPath = "/usr/bin";
-	if(Titanium.Platform.name === "Windows NT") {
-		this.rubyPath = "C:\cygwin\bin";
-	}
+	this.rubyPath = Grabber.RubyPath
 	
 	this.args = [
 		"ruby", 
@@ -50,7 +47,7 @@ Downloader.prototype.check = function() {
 		
 	this.process = Titanium.Process.createProcess({
 		args: args, 
-		env: {'PATH': this.rubyPath}
+		env: {"PATH": this.rubyPath}
     });
 
 	console.info(this.process.toString());
@@ -130,3 +127,36 @@ Downloader.prototype.stop = function() {
 	
 	this.process.kill();
 };
+
+// Downloader.getEnvPath = function() { 
+// 	//var p = Titanium.Platform.name;
+// 	var args = ["/bin/ls"];
+// 	/*
+// 	if(Titanium.Platform == "win32") {
+// 		args = ["C:\\Windows\\System32\\cmd.exe", "echo %PATH%"];
+// 	}*/
+// 	
+// 	//args.push("echo_me_please");
+// 	var process = Titanium.Process.createProcess({
+// 		args: args
+//     });
+// 
+// 	alert(process.toString());
+// 	var out = "";
+// 	process.setOnReadLine(function(data) {
+// 		console.info(Titanium.JSON.stringify(data));
+// 	    out += data.toString();
+// 	});
+// 	
+// 	process.setOnRead(function(data) {
+//     });
+// 	
+// 	process.setOnExit(function(data) {
+//         console.log("process exited with " + data.toString());	
+// 		alert("out: " + out);
+// 		$(document).trigger('GET_PATH_COMPLETED', out);
+// 	});
+// 		
+// 	process.launch();
+// 	
+// };

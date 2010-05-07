@@ -2,7 +2,7 @@
 <ti:app xmlns:ti='http://ti.appcelerator.org'>
 <!-- These values are edited/maintained by Titanium Developer -->
 <id>co.uk.fader.iplayer-grabber</id>
-<name>iPlayer Grabber</name>
+<name>iPlayer Grabber v2</name>
 <version>2.0b</version>
 <publisher>fader</publisher>
 <url>http://fader.co.uk</url>
@@ -13,8 +13,8 @@
 <id>initial</id>
 <title>iPlayer Grabber v2</title>
 <url>app://index.html</url>
-<width>990</width>
-<max-width>990</max-width>
+<width>994</width>
+<max-width>1000</max-width>
 <min-width>500</min-width>
 <height>820</height>
 <max-height>3000</max-height>

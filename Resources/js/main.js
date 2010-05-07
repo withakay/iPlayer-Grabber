@@ -8,8 +8,12 @@ Grabber.HTTPProxy = ""; //--http-proxy=HOST:PORT
 Grabber.DeleteCancelledDownloads = false;
 Grabber.EnableNotifications = true;
 
+Grabber.RubyPath;
+
 Grabber.init = function() {	
-			
+
+	Grabber.setRubyPath();
+	
 	Grabber.loadPreferences();
 	
 	this.downloadQueue = new DownloadQueue();
@@ -206,6 +210,10 @@ Grabber.notify = function(message) {
 	if(!Grabber.EnableNotifications) {
 		return;
 	}
+	// notifications break the app on windows
+	if(Titanium.platform !== "osx") {
+		return;
+	}
 	
 	if(!this.notifier) {
 		this.notifier = Titanium.Notification.createNotification($(document));
@@ -400,6 +408,24 @@ Grabber.savePreferences = function () {
 	
 	$.jStorage.set("preferences", prefs);
 	
+};
+
+Grabber.setRubyPath = function () {
+	var s = Titanium.platform == "win32" ? ";" : ":";
+	console.log(s);
+	var p = get_path(Titanium.platform).toString().split(s);
+	var ruby = Titanium.platform == "win32" ? "ruby.exe" : "ruby";
+	for (var i=0; i < p.length; i++) {
+		console.log(p[i]);
+		var r = Titanium.Filesystem.getFile(p[i], ruby);
+		if(r.exists())
+		{
+			Grabber.RubyPath = p[i];
+			return;
+		}
+		
+	}
+	return "Ruby was not found on your system! Ruby is a essential for 'Grabber to work\n Most likely you don't have it installed\n Please download and install Ruby. \n If you have Ruby installed then plase make sure it is in your path";
 };
 
 $(document).ready(function() {
