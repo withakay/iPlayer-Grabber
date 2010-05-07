@@ -21,8 +21,8 @@ DownloadQueue.prototype.init = function() {
 		}		
 	});
 	
-	$(document).bind("DOWNLOAD_FAILED", function(e, episode, line) {
-		that.remove(episode);
+	$(document).bind("DOWNLOAD_FAILED", function(e, data) {
+		that.remove(data.episode);
 		that.isDownloading = false;
 	});
 };

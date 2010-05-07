@@ -12,7 +12,7 @@ function Downloader(episode, options) {
 	this.isDownloading = false;
 	this.stopRequested = false;
 	this.process;
-	this.path_to_iplayer = Titanium.Filesystem.getResourcesDirectory() + "/iplayer-dl/bin/iplayer-dl";
+	this.path_to_iplayer = Titanium.Filesystem.getResourcesDirectory() + "/iplayer-dl/bin/iplayer-dl".replace(/\//gi, Titanium.Filesystem.getSeparator());
 	
 	// check the iplayer-dl script exists where we think it should be...
 	var iplayer_script = Titanium.Filesystem.getFile(this.path_to_iplayer);
@@ -24,9 +24,18 @@ function Downloader(episode, options) {
     }
 
 	// basic arguments that will always be required
+	
+	//alert(Titanium.Platform.name);
+	
+	//default ruby path on OS X
+	this.rubyPath = "/usr/bin";
+	if(Titanium.Platform.name === "Windows NT") {
+		this.rubyPath = "C:\cygwin\bin";
+	}
+	
 	this.args = [
-		"/usr/bin/ruby", 
-		"-I" + Titanium.Filesystem.getResourcesDirectory() + "/iplayer-dl/lib", 
+		"ruby", 
+		"-I" + Titanium.Filesystem.getResourcesDirectory() + "/iplayer-dl/lib".replace(/\//gi, Titanium.Filesystem.getSeparator()), 
 		this.path_to_iplayer, 
 		this.episode.pid
 	];
@@ -40,7 +49,8 @@ Downloader.prototype.check = function() {
 	args.push("-n");	
 		
 	this.process = Titanium.Process.createProcess({
-		args: args
+		args: args, 
+		env: {'PATH': this.rubyPath}
     });
 
 	console.info(this.process.toString());

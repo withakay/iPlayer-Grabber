@@ -57,18 +57,6 @@ div {
 	font-size: 0.6em;
 }
 
-#preferences-box {
-	border-right: solid 1px #2c2c2c;
-	position:absolute; 
-	left: 4px;
-	bottom: 2px;
-	z-index: 40;
-	background: -webkit-gradient(linear, left top, left bottom, from(#2c2c2c), to(#0c0c0c));
-	min-height: 32px;
-	height: 32px;
-	width: 32px;
-	font-size: 0.6em;
-}
 
 #download-list {
 	position:absolute; 
@@ -126,6 +114,21 @@ div {
 	float: left;
 }
 
+/* holds the button to toggle the preferences pane */ 
+#preferences-box {
+	border-right: solid 1px #2c2c2c;
+	position:absolute; 
+	left: 4px;
+	bottom: 2px;
+	z-index: 40;
+	background: -webkit-gradient(linear, left top, left bottom, from(#2c2c2c), to(#0c0c0c));
+	min-height: 32px;
+	height: 32px;
+	width: 32px;
+	font-size: 0.6em;
+}
+
+
 #preferences-pane {
 	display: none;
 	position:absolute; 
@@ -137,6 +140,22 @@ div {
 	font-size: 0.7em;
 }
 
-#preferences-pane tr {
+#preferences-pane table td {
+	padding-top: 8px;
+	padding-bottom: 8px;
+	border-bottom: solid 1px #666;
+	vertical-align:text-top;
+}
+
+#preferences-pane .preferences-label {
+	width: 240px;
+}
+
+#save-preferences-button-container {
 	padding: 4px;
+	text-align: right;
+}
+
+.small-text {
+	font-size: 0.8em;
 }

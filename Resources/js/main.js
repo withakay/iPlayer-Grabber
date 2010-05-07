@@ -5,9 +5,11 @@ Grabber.DownloadPath = Titanium.Filesystem.getDesktopDirectory().toString(); //-
 Grabber.CreateTitleSubDir = false; //--title-subdir
 Grabber.DownloadSubtitles = false; //--subtitles
 Grabber.HTTPProxy = ""; //--http-proxy=HOST:PORT
+Grabber.DeleteCancelledDownloads = false;
+Grabber.EnableNotifications = true;
 
 Grabber.init = function() {	
-		
+			
 	Grabber.loadPreferences();
 	
 	this.downloadQueue = new DownloadQueue();
@@ -17,14 +19,14 @@ Grabber.init = function() {
 	this.iframeLocation = "";		
 	this.iframe = document.getElementById("my-iframe");
 	
-	$("#my-iframe").height($(document).height() - $("#bottom-panel").height());
+	$("#my-iframe").height($(document).height() - ($("#bottom-panel").height() + 10));
 
 	$(that.iframe.contentDocument).ready(function() {
 		that.iframeLocation = that.iframe.contentDocument.location.href;
 	});
 		
 	$(window).resize(function () {
-		$("#my-iframe").height($(document).height() - $("#bottom-panel").height());
+		$("#my-iframe").height($(document).height() - ($("#bottom-panel").height() + 10));
 	});	
 	
 	var locationChanged = function() {
@@ -36,9 +38,7 @@ Grabber.init = function() {
 				var parts = that.iframeLocation.split("/");
 				for (var i=0; i < parts.length; i++) {
 					if(parts[i] === "episode") {
-						$(document).trigger('EPISODE_DETECTED', {pid: parts[i+1], name: parts[i+2].replace(/_/gi, " ")});	
-						// iplayer-dl can handle the entire url, so let it		
-						//$(document).trigger('EPISODE_DETECTED', {pid: that.iframeLocation, name: parts[i+2].replace(/_/gi, " ")});						
+						$(document).trigger('EPISODE_DETECTED', {pid: parts[i+1], name: parts[i+2].replace(/_/gi, " ")});							
 						break;
 					}
 				}
@@ -88,10 +88,14 @@ Grabber.initEventBindings = function() {
 	});
 	
 	$(document).bind("DOWNLOAD_FAILED", function(e, data) {
-		alert("sorry, we couldn't grab this programme. " + data.line);
 		Grabber.notify(data.episode.name + " has failed to download.");
-		Grabber.removeFromDownloadList(data.episode);		
-		Grabber.updateDownloadSummary();
+		alert("sorry, we couldn't grab this programme. " + data.line);	
+		// often when a download fails a zero kb file is created, so this will tidy it up
+		// we don't want to delete files greater than zero kb as they could possibly be resumed	
+		Grabber.deleteEpisodeFileIfZeroKb(data.episode);		
+		//handle these with the DOWNLOAD_LIST_ITEM_REMOVED event
+		//Grabber.removeFromDownloadList(data.episode);
+		//Grabber.updateDownloadSummary();
 	});
 	
 	$(document).bind("DOWNLOAD_STOPPED", function(e, data) {
@@ -106,6 +110,7 @@ Grabber.initEventBindings = function() {
 	
 	$(document).bind("DOWNLOAD_REMOVED_FROM_QUEUE", function(e, episode) {
 		//Grabber.notify(episode.name + " has downloaded.");
+		Grabber.removeFromDownloadList(episode);
 		Grabber.updateDownloadSummary();
 	});
 	
@@ -131,7 +136,6 @@ Grabber.queueEpisode = function(episode) {
 // show a dialog asking the user if they want to download the detected episode
 Grabber.queueEpisodeDialog = function(episode) {
 	$(".download-button").remove();
-	//var b = $("<button>Add '" + data.name + "' to the download queue?</button>");
 	var b = $("<a id='download-button-" + episode.pid + "' href='#' class='download-button'>Add '" + episode.name + "' to the download queue?</a>");
 	$(b).button({ icons: {primary:'ui-icon-triangle-1-s'} });
 	$("#bottom-panel").append(b);
@@ -148,7 +152,7 @@ Grabber.queueEpisodeDialog = function(episode) {
 };
 
 Grabber.episodeNotAvailableMessage = function(episode) {
-	var b = $("<a id='download-button' href='#'>Sorry, '" + episode.name + "' is not available for download.</a>");
+	var b = $("<a id='download-button' href='#' class='download-button'>Sorry, '" + episode.name + "' is not available for download.</a>");
 	$(b).button({ icons: {primary:'ui-icon-alert'} });
 	$("#bottom-panel").append(b);
 	$(b).animate({
@@ -199,10 +203,13 @@ Grabber.updateProgress = function(episode, progress) {
 };
 
 Grabber.notify = function(message) {
+	if(!Grabber.EnableNotifications) {
+		return;
+	}
+	
 	if(!this.notifier) {
 		this.notifier = Titanium.Notification.createNotification($(document));
-		//var s = Titanium.Filesystem.getSeparator();
-		var iconPath = Titanium.Filesystem.getResourcesDirectory() + "iplayer-dl/share/pixmaps/iplayer-dl/icon128.png";
+		var iconPath = Titanium.Filesystem.getResourcesDirectory() + "iplayer-dl/share/pixmaps/iplayer-dl/icon128.png".replace(/\//gi, Titanium.Filesystem.getSeparator());
 		this.notifier.setIcon(iconPath);
 	}
 	this.notifier.setMessage(message);
@@ -228,6 +235,8 @@ Grabber.hideDownloadListIfEmpty = function() {
 };
 
 Grabber.updateDownloadSummary = function() {
+	console.log("updateDownloadSummary");
+	console.log(Titanium.JSON.stringify(Grabber.downloadQueue));
 	var message = this.downloadQueue.count() === 1 ? 
 		this.downloadQueue.count() + " queued download" : 
 		this.downloadQueue.count() + " queued downloads";
@@ -275,6 +284,26 @@ Grabber.removeFromDownloadList = function (episode) {
 
 Grabber.cancelDownload = function (episode) {
 	this.downloadQueue.remove(episode);	
+	if(Grabber.DeleteCancelledDownloads) {
+		Grabber.deleteEpisodeFile(episode);
+	}
+};
+
+Grabber.deleteEpisodeFile = function (episode) {
+	var file = Titanium.Filesystem.getFile(Grabber.DownloadPath, episode.name);
+	if(file.exists()) {
+		var success = file.deleteFile();
+		console.log("Deleting file '" + episode.name + "' " + success.toString());
+	}
+};
+
+Grabber.deleteEpisodeFileIfZeroKb = function (episode) {
+	console.log("deleteIfZeroKb called");
+	var file = Titanium.Filesystem.getFile(Grabber.DownloadPath, episode.name);
+	if(file.exists() && file.size() === 0) {
+		var success = file.deleteFile();
+		console.log("Deleting file '" + episode.name + "' " + success.toString());
+	}
 };
 
 Grabber.createPreferencesButton = function () {
@@ -312,6 +341,7 @@ Grabber.initPreferencesPane = function () {
 	$("#save-preferences-button").button({text: true, icons: {primary: "ui-icon-disk"}}); //ui-icon-disk ui-icon-video
 	$("#save-preferences-button").click(function () {
 		Grabber.savePreferences();
+		$("#preferences-pane").toggle();
 	});
 	/*
 	$("#preferences-pane").filter(":checkbox,:radio").checkbox();
@@ -336,6 +366,8 @@ Grabber.loadPreferences = function () {
 		Grabber.CreateTitleSubDir = prefs.CreateTitleSubDir;
 		Grabber.DownloadSubtitles = prefs.DownloadSubtitles;
 		Grabber.HTTPProxy = prefs.HTTPProxy;
+		Grabber.DeleteCancelledDownloads = prefs.DeleteCancelledDownloads;
+		Grabber.EnableNotifications = prefs.EnableNotifications;
 	}
 	
 	$("#max-downloads").val(Grabber.MaxActiveDownloads);
@@ -343,6 +375,8 @@ Grabber.loadPreferences = function () {
 	$("#title-subdir-checkbox").attr("checked", Grabber.CreateTitleSubDir);
 	$("#subtitles-checkbox").attr("checked", Grabber.DownloadSubtitles);
 	$("#proxy-text").val(Grabber.HTTPProxy);
+	$("#delete-cancelled-checkbox").attr("checked", Grabber.DeleteCancelledDownloads);
+	$("#notifications-checkbox").attr("checked", Grabber.EnableNotifications);
 	
 };
 
@@ -352,6 +386,8 @@ Grabber.savePreferences = function () {
 	Grabber.CreateTitleSubDir = $("#title-subdir-checkbox").attr("checked");
 	Grabber.DownloadSubtitles = $("#subtitles-checkbox").attr("checked");
 	Grabber.HTTPProxy = $("#proxy-text").val();
+	Grabber.DeleteCancelledDownloads = $("#delete-cancelled-checkbox").attr("checked");
+	Grabber.EnableNotifications = $("#notifications-checkbox").attr("checked");
 	
 	var prefs = {};
 	prefs.MaxActiveDownloads = Grabber.MaxActiveDownloads;
@@ -359,6 +395,8 @@ Grabber.savePreferences = function () {
 	prefs.CreateTitleSubDir = Grabber.CreateTitleSubDir;
 	prefs.DownloadSubtitles = Grabber.DownloadSubtitles;
 	prefs.HTTPProxy = Grabber.HTTPProxy;
+	prefs.DeleteCancelledDownloads = Grabber.DeleteCancelledDownloads;
+	prefs.EnableNotifications = Grabber.EnableNotifications;
 	
 	$.jStorage.set("preferences", prefs);
 	
