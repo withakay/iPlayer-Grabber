@@ -3,11 +3,12 @@
 <!-- These values are edited/maintained by Titanium Developer -->
 <id>co.uk.fader.iplayer-grabber</id>
 <name>iPlayer Grabber v2</name>
-<version>2.0b</version>
+<version>2.0</version>
 <publisher>fader</publisher>
 <url>http://fader.co.uk</url>
 <icon>icon128.png</icon>
 <copyright>2010 by fader</copyright>
+<analytics>false</analytics>
 <!-- Window Definition - these values can be edited -->
 <window>
 <id>initial</id>
