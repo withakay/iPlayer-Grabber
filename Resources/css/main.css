@@ -8,8 +8,8 @@ body {
 	
 }
 
-div {
-	font-size: 0.9em;
+#main-container {
+	font-size: 1em;
 }
 
 #iframe-container {	

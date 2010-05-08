@@ -12,7 +12,9 @@ Grabber.RubyPath;
 
 Grabber.init = function() {	
 
-	Grabber.setRubyPath();
+	if(!Grabber.setRubyPath()) {
+		$("#main-container").hide();
+	}
 	
 	Grabber.loadPreferences();
 	
@@ -424,11 +426,12 @@ Grabber.setRubyPath = function () {
 		if(r.exists())
 		{
 			Grabber.RubyPath = p[i];
-			return;
+			return true;
 		}
 		
 	}
-	return "Ruby was not found on your system! Ruby is a essential for 'Grabber to work\n Most likely you don't have it installed\n Please download and install Ruby. \n If you have Ruby installed then plase make sure it is in your path";
+	alert("Ruby was not found on your system! Ruby is a essential for 'Grabber to work\n Most likely you don't have it installed\n Please download and install Ruby. \n If you have Ruby installed then plase make sure it is in your path");
+	return false;
 };
 
 $(document).ready(function() {

@@ -25,73 +25,76 @@
 		<title></title>
 	</head>
 	<body>
-		<div id="iframe-container">
-			<iframe id="my-iframe" src="http://bbc.co.uk/iplayer"></iframe>
-		</div>
+		<div id="main-container">		
 		
-		<div id="bottom-panel">			
+			<div id="iframe-container">
+				<iframe id="my-iframe" src="http://bbc.co.uk/iplayer"></iframe>
+			</div>
+		
+			<div id="bottom-panel">			
 			
-		</div>
+			</div>
 		
-		<div id="download-summary">
-		</div>
+			<div id="download-summary">
+			</div>
 		
-		<div id="preferences-box">
+			<div id="preferences-box">
 			
-		</div>
+			</div>
 		
-		<div id="preferences-pane" class="ui-widget ui-widget-content">
-			<div id="preferences-header" class="ui-accordion-header ui-state-active">Preferences</div>
-				<table cellpadding="0" cellspacing="0">
-					<tr>
-						<td class="preferences-label">Maximum simultaneous downloads</td>
-						<td><select name="max-downloads" id="max-downloads">
-								<option>1</option>
-								<option>2</option>
-								<option>3</option>
-								<option>4</option>
-								<option>5</option>
-								<option>6</option>
-								<option>7</option>
-								<option>8</option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td class="preferences-label">Download path. (<span id="download-path"></span>)</td>
-						<td><button id="download-path-button">choose...</button></td>
-					</tr>
-					<tr>
-						<td class="preferences-label">Place downloaded files in a sub-directory named after the title of the programme.</td>
-						<td><input type="checkbox" id="title-subdir-checkbox"></td>
-					</tr>
-					<tr>
-						<td class="preferences-label">Also download subtitles.</td>
-						<td><input type="checkbox" id="subtitles-checkbox"></td>
-					</tr>
-					<tr>
-						<td class="preferences-label">Specify an HTTP proxy.<br>
-						    <span class="small-text">Default is taken from the http_proxy environment variable.</span></td>
-						<td><input type="text" id="proxy-text"></td>
-					</tr>
-					<tr>
-						<td class="preferences-label">Delete file if download is cancelled.<br>
-							<span class="small-text">If false the partially download file will remain on your computer and if you choose to download the programme again, it should resume from where it left off<span></td>
-						<td><input type="checkbox" id="delete-cancelled-checkbox"></td>
-					</tr>
-					<tr>
-						<td class="preferences-label">Enable notifications.</td>
-						<td><input type="checkbox" id="notifications-checkbox"></td>
-					</tr>
-				</table>	
-				<div id="save-preferences-button-container">
-					<button id="save-preferences-button">Save and close preferences</button>
-				</div>
-		</div>
+			<div id="preferences-pane" class="ui-widget ui-widget-content">
+				<div id="preferences-header" class="ui-accordion-header ui-state-active">Preferences</div>
+					<table cellpadding="0" cellspacing="0">
+						<tr>
+							<td class="preferences-label">Maximum simultaneous downloads</td>
+							<td><select name="max-downloads" id="max-downloads">
+									<option>1</option>
+									<option>2</option>
+									<option>3</option>
+									<option>4</option>
+									<option>5</option>
+									<option>6</option>
+									<option>7</option>
+									<option>8</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td class="preferences-label">Download path. (<span id="download-path"></span>)</td>
+							<td><button id="download-path-button">choose...</button></td>
+						</tr>
+						<tr>
+							<td class="preferences-label">Place downloaded files in a sub-directory named after the title of the programme.</td>
+							<td><input type="checkbox" id="title-subdir-checkbox"></td>
+						</tr>
+						<tr>
+							<td class="preferences-label">Also download subtitles.</td>
+							<td><input type="checkbox" id="subtitles-checkbox"></td>
+						</tr>
+						<tr>
+							<td class="preferences-label">Specify an HTTP proxy.<br>
+							    <span class="small-text">Default is taken from the http_proxy environment variable.</span></td>
+							<td><input type="text" id="proxy-text"></td>
+						</tr>
+						<tr>
+							<td class="preferences-label">Delete file if download is cancelled.<br>
+								<span class="small-text">If false the partially download file will remain on your computer and if you choose to download the programme again, it should resume from where it left off<span></td>
+							<td><input type="checkbox" id="delete-cancelled-checkbox"></td>
+						</tr>
+						<tr>
+							<td class="preferences-label">Enable notifications.</td>
+							<td><input type="checkbox" id="notifications-checkbox"></td>
+						</tr>
+					</table>	
+					<div id="save-preferences-button-container">
+						<button id="save-preferences-button">Save and close preferences</button>
+					</div>
+			</div>
 		
-		<div id="download-list" class="ui-accordion ui-accordion-icons">
-			<div id="download-list-header" class="ui-accordion-header ui-state-active">Downloads</div>
-		</div>
+			<div id="download-list" class="ui-accordion ui-accordion-icons">
+				<div id="download-list-header" class="ui-accordion-header ui-state-active">Downloads</div>
+			</div>
 		
+		</div>
 	</body>
 </html>

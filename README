@@ -6,7 +6,7 @@ Requirements
 You will need Ruby installed and in your PATH
 OS X: Ruby is preinstalled on OS X 10.5
 Windows: Ruby does not come as part of Windows, get it here if you do not have it already http://rubyinstaller.org/
-Linux: If you are using a popular distro like Ubuntu or Fedora you probably have Ruby installed. If not use your package manager to install it. Google is your friend :)
+Linux: Install ruby via your distro's package manager. Google is your friend :)
 
 What does it do?
 ----------------
@@ -30,3 +30,23 @@ Because of this iPlayer Grabber can now be compiled on Mac OS X, Windows and Lin
 
 iPlayer Grabber is release as open source under the MIT License.
 Grab the source here: http://github.com/withakay/iPlayer-Grabber
+
+Known Issues
+------------
+OS X:
+non
+
+Windows:
+Notifications crash iPlayer Grabber so they are disabled until the problem is resolved.
+
+Linux:
+There is and issue with the Titanium framework on Ubuntu 10.0.4 LTS, to make 'Grabber work you will need to remove some bits.
+Open a command prompt
+cd to your iPlayer Grabber directory 
+
+run the following commands:
+
+rm runtime/libgobject*
+rm runtime/libglib*
+rm runtime/libgio*
+rm runtime/libgthread*
