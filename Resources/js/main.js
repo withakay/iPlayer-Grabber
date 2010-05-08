@@ -23,6 +23,8 @@ Grabber.init = function() {
 	this.iframeLocation = "";		
 	this.iframe = document.getElementById("my-iframe");
 	
+	$("#bottom-panel").width($(document).width());
+	
 	$("#my-iframe").height($(document).height() - ($("#bottom-panel").height() + 10));
 
 	$(that.iframe.contentDocument).ready(function() {
@@ -31,6 +33,7 @@ Grabber.init = function() {
 		
 	$(window).resize(function () {
 		$("#my-iframe").height($(document).height() - ($("#bottom-panel").height() + 10));
+		$("#bottom-panel").width($(document).width());
 	});	
 	
 	var locationChanged = function() {
