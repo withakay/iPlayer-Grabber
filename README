@@ -1,0 +1,32 @@
+iPlayer Grabber 2.0
+===================
+
+Requirements
+------------
+You will need Ruby installed and in your PATH
+OS X: Ruby is preinstalled on OS X 10.5
+Windows: Ruby does not come as part of Windows, get it here if you do not have it already http://rubyinstaller.org/
+Linux: If you are using a popular distro like Ubuntu or Fedora you probably have Ruby installed. If not use your package manager to install it. Google is your friend :)
+
+What does it do?
+----------------
+iPlayer Grabber allows you to browse the BBC iPlayer web site and download DRM-free video (h.264) and audio (MP3) files from the BBC iPlayer service.
+
+Some Limitations
+----------------
+(copied verbatim from http://po-ru.com/projects/iplayer-downloader/)
+"It won’t download every programme that’s on the iPlayer website, because they’re not always available. Sometimes, this is by design (as in the case of films and expensive US series like Heroes); sometimes it’s due to omission or transient problems. In addition, it can’t currently download the embedded videos that are not part of the main iPlayer service.
+
+To be clear, let me state it here: You can’t download most films. You can’t download some American TV series. You can’t download in HD. You can’t download things that aren’t on the iPlayer proper. Some other programmes also can’t be downloaded for reasons that are unclear."
+
+How does it do it?
+------------------
+Using Paul Battley's iplayer-dl script (http://po-ru.com/projects/iplayer-downloader/). 
+iplayer-dl is the at the heart of iPlayer Grabber and does all the heavy lifting involved with actulally getting the stuff you want from the BBC to your computer.
+iPlayer Grabber provides a nice, graphical interface with an integrated web browser and some nice bouns features like a download queue and simultaneous dowloading of programs (to maximise your bandwidth).
+
+iPlayer Grabber 2.0 was created using the Appcelerator Titanium framework (http://www.appcelerator.com/) and was coded using html, css and JavaScript and Ruby.
+Because of this iPlayer Grabber can now be compiled on Mac OS X, Windows and Linux. iPlayer Grabber was written in Cocoa/Objective-C and was a strictly Mac OS X affair. 
+
+iPlayer Grabber is release as open source under the MIT License.
+Grab the source here: http://github.com/withakay/iPlayer-Grabber
