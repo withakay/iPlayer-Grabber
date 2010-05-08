@@ -72,6 +72,10 @@ body {
 	display: none;
 }
 
+.download-title {
+	width: 178px !important;
+}
+
 #download-list-header {
 	font-size: 0.6em;
 }

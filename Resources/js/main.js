@@ -11,9 +11,13 @@ Grabber.EnableNotifications = true;
 Grabber.RubyPath;
 
 Grabber.init = function() {	
-
+	
 	if(!Grabber.setRubyPath()) {
 		$("#main-container").hide();
+		alert("Ruby was not found on your system! Ruby is a essential for 'Grabber to work" +
+			"\n Most likely you don't have it installed\n Please download and install Ruby." + 
+			"\n If you have Ruby installed then plase make sure it is in your path"
+		);
 	}
 	
 	Grabber.loadPreferences();
@@ -189,6 +193,7 @@ Grabber.createDownloadWidget = function(episode) {
 	$(p).progressbar({value: 0});	
 	$(b).button({ text: false, icons: {primary:'ui-icon-circle-close'} });
 	$(b).height(32);
+	$(b).width(32);
 	$(p).height(32);
 	$(w).append(p);
 	$(w).append(b);
@@ -430,7 +435,6 @@ Grabber.setRubyPath = function () {
 		}
 		
 	}
-	alert("Ruby was not found on your system! Ruby is a essential for 'Grabber to work\n Most likely you don't have it installed\n Please download and install Ruby. \n If you have Ruby installed then plase make sure it is in your path");
 	return false;
 };
 
