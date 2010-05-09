@@ -8,7 +8,7 @@
 <url>http://fader.co.uk</url>
 <icon>icon128.png</icon>
 <copyright>Copyright (c) 2010 Jack Rutherford, http://fader.co.uk</copyright>
-<analytics>false</analytics>
+<analytics>true</analytics>
 <!-- Window Definition - these values can be edited -->
 <window>
 <id>initial</id>

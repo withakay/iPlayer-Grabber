@@ -1,4 +1,4 @@
-#appname:iPlayer Grabber
+#appname:iPlayer Grabber v2
 #appid:co.uk.fader.iplayer-grabber
 #publisher:fader
 #image:icon128.png
@@ -9,6 +9,7 @@
 runtime:1.0.0
 api:1.0.0
 javascript:1.0.0
+tianalytics:1.0.0
 tiapp:1.0.0
 tifilesystem:1.0.0
 tiplatform:1.0.0

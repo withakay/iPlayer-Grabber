@@ -20,6 +20,8 @@ Grabber.init = function() {
 		);
 	}
 	
+	Grabber.initAppUpdates();
+	
 	Grabber.loadPreferences();
 	
 	this.downloadQueue = new DownloadQueue();
@@ -423,13 +425,26 @@ Grabber.savePreferences = function () {
 Grabber.setRubyPath = function () {
 	var s = Titanium.platform == "win32" ? ";" : ":";
 	console.log(s);
-	var p = get_path(Titanium.platform).toString().split(s);
+	var environment = Titanium.API.getEnvironment();
+	//alert(Titanium.JSON.stringify(environment));
+	var path = environment['PATH'];
+	if(path === undefined ) {
+		path = environment['Path'];
+	}
+	if(path === undefined ) {
+		path = environment['[path]'];
+	}
+    if (path === undefined) {
+		alert("no PATH variable defined in environment");
+		return false;
+    }
+	//alert(Titanium.JSON.stringify(environment));
+	var p = path.toString().split(s);
 	var ruby = Titanium.platform == "win32" ? "ruby.exe" : "ruby";
 	for (var i=0; i < p.length; i++) {
 		console.log(p[i]);
 		var r = Titanium.Filesystem.getFile(p[i], ruby);
-		if(r.exists())
-		{
+		if(r.exists()) {
 			Grabber.RubyPath = p[i];
 			return true;
 		}
@@ -438,6 +453,97 @@ Grabber.setRubyPath = function () {
 	return false;
 };
 
+Grabber.initAppUpdates = function () {
+	
+	//
+	// Register for Titanium Developer Updates
+	//
+	/*
+	Titanium.UpdateManager.onupdate = function(details)	{
+		var conf = confirm('New iPlayer Grabber available (version ' + details.version + '). Do you want to download it?');
+		if(conf) {
+			Grabber.notify('Installing new version...');
+			Titanium.UpdateManager.installAppUpdate(details, function () {
+				alert("Update complete, enjoy!");
+			});
+		}
+	};
+	*/
+	//
+	// Register SDK Update listeners
+	//
+	/*
+	Titanium.UpdateManager.startMonitor([Titanium.API.APP_UPDATE], function(details) {
+		alert(Titanium.JSON.stringify(details));
+	});*/
+};
+
+
+Grabber.updateCheck = function (component,version,callback,limit)
+{
+	try
+	{
+		if (!Titanium.Network.online)
+		{
+			return;
+		}
+		limit = (limit==undefined) ? 1 : limit;
+		var url = Titanium.App.getStreamURL("release-list");
+		console.log(url);
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+		var qs = 'version='+Titanium.Network.encodeURIComponent(version)+'&name='+Titanium.Network.encodeURIComponent(component)+'&mid='+Titanium.Network.encodeURIComponent(Titanium.Platform.id)+'&limit='+limit+'&guid='+Titanium.Network.encodeURIComponent(Titanium.App.getGUID());
+		console.log(qs);
+		xhr.onreadystatechange = function()
+		{
+			if (this.readyState==4)
+			{
+				try
+				{
+					var json = window.Titanium.JSON.parse(this.responseText);
+					if (!json.success)
+					{
+						console.error("Error response from update service: "+json.message);
+						callback(false);
+						return;
+					}
+					if (json.releases.length > 0)
+					{
+						// we might have an update
+						// compare our version with the 
+						// remote version
+						var update = limit == 1 ? json.releases[0] : json.releases;
+						callback(true,update);
+					}
+					else
+					{
+						callback(false);
+					}
+				}
+				catch(e)
+				{
+					console.error("Exception communicating to update service: "+e);
+					callback(false);
+				}
+			}
+		};
+		xhr.open('POST',url,true);
+		xhr.send(qs);
+	}
+	catch(e)
+	{
+		console.error("Error performing update check = "+e);
+		callback(false);
+	}
+};
+
 $(document).ready(function() {
+	/*
+	Grabber.updateCheck("app_update", "0.1.0", function(success,details)
+	{
+		alert(success);
+		alert(Titanium.JSON.stringify(details));
+	});
+	*/
 	Grabber.init();
 });
