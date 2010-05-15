@@ -27,8 +27,7 @@ Grabber.init = function() {
 	Grabber.initAppUpdates();	
 	Grabber.loadPreferences();	
 	Grabber.initEventBindings();
-	
-	
+		
 	var that = this;
 	this.iframeLocation = "";		
 	this.iframe = document.getElementById("my-iframe");
