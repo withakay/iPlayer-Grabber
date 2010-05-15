@@ -12,6 +12,8 @@ Grabber.RubyPath;
 
 Grabber.init = function() {	
 	
+	Grabber.showLoadingDialog();
+	
 	if(!Grabber.setRubyPath()) {
 		$("#main-container").hide();
 		alert("Ruby was not found on your system! Ruby is a essential for 'Grabber to work" +
@@ -20,16 +22,17 @@ Grabber.init = function() {
 		);
 	}
 	
-	Grabber.initAppUpdates();
-	
-	Grabber.loadPreferences();
-	
 	this.downloadQueue = new DownloadQueue();
-	this.initEventBindings();
+	
+	Grabber.initAppUpdates();	
+	Grabber.loadPreferences();	
+	Grabber.initEventBindings();
+	
 	
 	var that = this;
 	this.iframeLocation = "";		
 	this.iframe = document.getElementById("my-iframe");
+	this.iframe.src = "http://bbc.co.uk/iplayer";
 	
 	$("#bottom-panel").width($("#my-iframe").width()-88);
 	
@@ -556,6 +559,19 @@ Grabber.updateCheck = function (component,version,callback,limit)
 		console.error("Error performing update check = "+e);
 		callback(false);
 	}
+};
+
+Grabber.showLoadingDialog = function () {
+	var d = $('<div></div>');	
+	d.html("Connecting to iPlayer...");	
+	d.dialog({ autoOpen: false, 
+			modal: true,
+			open: function(event, ui) { 
+			setTimeout(function() {
+				d.remove();
+			}, 3000);
+		} });
+	d.dialog("open");	
 };
 
 $(document).ready(function() {

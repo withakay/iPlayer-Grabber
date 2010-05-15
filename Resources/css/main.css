@@ -164,3 +164,7 @@ body {
 .small-text {
 	font-size: 0.8em;
 }
+
+#dialog {
+	display: none;
+}
