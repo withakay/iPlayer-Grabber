@@ -22,11 +22,11 @@ To be clear, let me state it here: You can’t download most films. You can’t 
 How does it do it?
 ------------------
 Using Paul Battley's iplayer-dl script (http://po-ru.com/projects/iplayer-downloader/). 
-iplayer-dl is the at the heart of iPlayer Grabber and does all the heavy lifting involved with actulally getting the stuff you want from the BBC to your computer.
-iPlayer Grabber provides a nice, graphical interface with an integrated web browser and some nice bouns features like a download queue and simultaneous dowloading of programs (to maximise your bandwidth).
+iplayer-dl is the at the heart of iPlayer Grabber and does all the heavy lifting involved with actually getting the stuff you want from the BBC to your computer.
+iPlayer Grabber provides a nice, graphical interface with an integrated web browser and some nice bonus features like a download queue and simultaneous downloading of programs (to maximise your bandwidth).
 
-iPlayer Grabber 2.0 was created using the Appcelerator Titanium framework (http://www.appcelerator.com/) and was coded using html, css and JavaScript and Ruby.
-Because of this iPlayer Grabber can now be compiled on Mac OS X, Windows and Linux. iPlayer Grabber was written in Cocoa/Objective-C and was a strictly Mac OS X affair. 
+iPlayer Grabber 2.0 was created using the Appcelerator Titanium framework (http://www.appcelerator.com/) and was coded using html, css, JavaScript and Ruby.
+Because of this iPlayer Grabber can now be compiled on Mac OS X, Windows and Linux. iPlayer Grabber was originally written in Cocoa/Objective-C and was a strictly Mac OS X affair. 
 
 iPlayer Grabber is release as open source under the MIT License.
 Grab the source here: http://github.com/withakay/iPlayer-Grabber
