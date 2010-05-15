@@ -28,7 +28,7 @@ function Downloader(episode, options) {
 	//alert(Titanium.Platform.name);
 	
 	//default ruby path on OS X
-	this.rubyPath = Grabber.RubyPath
+	this.rubyPath = Grabber.RubyPath;
 	
 	this.args = [
 		"ruby", 
@@ -40,9 +40,9 @@ function Downloader(episode, options) {
 
 Downloader.prototype.check = function() {
 	var that = this;
-	//copy all the items out to a new array so additions in the method don't polute the whole object
-	var args = this.args.slice();
+	
 	// push the 'dry run' argument'	
+	var args = this.setupArgs();
 	args.push("-n");	
 		
 	this.process = Titanium.Process.createProcess({
@@ -66,9 +66,10 @@ Downloader.prototype.check = function() {
 	this.process.launch();
 };
 
-Downloader.prototype.start = function() {
-	var that = this;		
+Downloader.prototype.setupArgs = function () {
+	//copy all the items out to a new array so additions in the method don't polute the whole object
 	var args = this.args.slice();
+	
 	args.push("--download-path=" + this.options.DownloadPath);
 	
 	if(this.options.CreateTitleSubDir) {
@@ -80,6 +81,13 @@ Downloader.prototype.start = function() {
 	if(this.options.HTTPProxy.length > 0) {
 		args.push("--http-proxy=" + this.options.HTTPProxy);
 	}
+	
+	return args;
+};
+
+Downloader.prototype.start = function() {
+	var that = this;		
+	var args = this.setupArgs();	
 		
 	this.process = Titanium.Process.createProcess({
 		args: args

@@ -1,4 +1,4 @@
-# we want the script in editable folder for testing
+
 def get_path(platform)
     #cmd = "/Users/jack/Code/appcelerator/iPlayer-Grabber/dist/osx/iPlayer Grabber v2.app/Contents/Resources/iplayer-dl/bin/iplayer-dl b00s9c9g -n"
 	  if platform == "win32"

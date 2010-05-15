@@ -31,7 +31,7 @@ Grabber.init = function() {
 	this.iframeLocation = "";		
 	this.iframe = document.getElementById("my-iframe");
 	
-	$("#bottom-panel").width($(document).width());
+	$("#bottom-panel").width($("#my-iframe").width()-88);
 	
 	$("#my-iframe").height($(document).height() - ($("#bottom-panel").height() + 10));
 
@@ -41,7 +41,7 @@ Grabber.init = function() {
 		
 	$(window).resize(function () {
 		$("#my-iframe").height($(document).height() - ($("#bottom-panel").height() + 10));
-		$("#bottom-panel").width($(document).width());
+		$("#bottom-panel").width($("#my-iframe").width()-88);
 	});	
 	
 	var locationChanged = function() {
@@ -71,10 +71,12 @@ Grabber.init = function() {
 Grabber.initEventBindings = function() {
 	$(document).bind("EPISODE_DETECTED", function(e, episode) {
 		$(document).bind("CHECK_COMPLETED", function(e, data) {
-			if(data.result) {
+			if(data.result && (data.result.indexOf(".mp3") !== -1 || data.result.indexOf(".mp4") !== -1)) {
 				console.log("data.result " + data.result);
 				episode.name = data.result;
 				Grabber.queueEpisodeDialog(episode);
+			} else if (data.result) {
+				alert(data.result);			
 			} else {
 				Grabber.episodeNotAvailableMessage(episode);
 			}
@@ -135,7 +137,13 @@ Grabber.initEventBindings = function() {
 };
 
 Grabber.checkEpisode = function(episode) {
-	var d = new Downloader(episode);
+	var options = {
+		DownloadPath: Grabber.DownloadPath, 
+		CreateTitleSubDir: Grabber.CreateTitleSubDir, 
+		DownloadSubtitles: Grabber.DownloadSubtitles,
+		HTTPProxy: Grabber.HTTPProxy
+	};
+	var d = new Downloader(episode, options);
 	d.check();
 };
 
@@ -377,7 +385,6 @@ Grabber.loadPreferences = function () {
 	//proxy-text
 	//subtitles-checkbox
 	
-	
 	var prefs = $.jStorage.get("preferences", null);
 	console.log(Titanium.JSON.stringify(prefs));
 	if(prefs) {
@@ -388,6 +395,9 @@ Grabber.loadPreferences = function () {
 		Grabber.HTTPProxy = prefs.HTTPProxy;
 		Grabber.DeleteCancelledDownloads = prefs.DeleteCancelledDownloads;
 		Grabber.EnableNotifications = prefs.EnableNotifications;
+	} else {
+	 	//if there are no prefs then assume this is the first run so show the preferences panel
+		$("#preferences-pane").toggle();
 	}
 	
 	$("#max-downloads").val(Grabber.MaxActiveDownloads);
@@ -397,6 +407,12 @@ Grabber.loadPreferences = function () {
 	$("#proxy-text").val(Grabber.HTTPProxy);
 	$("#delete-cancelled-checkbox").attr("checked", Grabber.DeleteCancelledDownloads);
 	$("#notifications-checkbox").attr("checked", Grabber.EnableNotifications);
+	
+	if(Grabber.HTTPProxy.length > 0) {		
+		Titanium.Network.setHTTPProxy(Grabber.HTTPProxy);
+		HTTP_PROXY = Grabber.HTTPProxy;
+		console.log("loadPreferences: setting HTTP Proxy");
+	}
 	
 };
 
@@ -419,6 +435,11 @@ Grabber.savePreferences = function () {
 	prefs.EnableNotifications = Grabber.EnableNotifications;
 	
 	$.jStorage.set("preferences", prefs);
+	
+	if(Grabber.HTTPProxy.length > 0) {
+		Titanium.Network.setHTTPProxy(Grabber.HTTPProxy);
+		console.log("savePreferences: setting HTTP Proxy");
+	}
 	
 };
 
@@ -538,12 +559,12 @@ Grabber.updateCheck = function (component,version,callback,limit)
 };
 
 $(document).ready(function() {
-	/*
-	Grabber.updateCheck("app_update", "0.1.0", function(success,details)
-	{
-		alert(success);
-		alert(Titanium.JSON.stringify(details));
-	});
-	*/
+		// 
+		// Grabber.updateCheck("app_update", "0.1.0", function(success,details)
+		// {
+		// 	alert(success);
+		// 	alert(Titanium.JSON.stringify(details));
+		// });
+	
 	Grabber.init();
 });
