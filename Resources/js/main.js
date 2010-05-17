@@ -57,7 +57,8 @@ Grabber.init = function() {
 				var parts = that.iframeLocation.split("/");
 				for (var i=0; i < parts.length; i++) {
 					if(parts[i] === "episode") {
-						$(document).trigger('EPISODE_DETECTED', {pid: parts[i+1], name: parts[i+2].replace(/_/gi, " ")});							
+						var episode = {pid: parts[i+1], name: parts[i+2].replace(/_/gi, " ")};
+						$(document).trigger('EPISODE_DETECTED', episode);							
 						break;
 					}
 				}
@@ -140,15 +141,15 @@ Grabber.initEventBindings = function() {
 	});
 };
 
-Grabber.checkEpisode = function(episode) {
+Grabber.checkEpisode = function(_episode) {
 	var options = {
 		DownloadPath: Grabber.DownloadPath, 
 		CreateTitleSubDir: Grabber.CreateTitleSubDir, 
 		DownloadSubtitles: Grabber.DownloadSubtitles,
 		HTTPProxy: Grabber.HTTPProxy
 	};
-	var d = new Downloader(episode, options);
-	d.check();
+	var checkDownloader = new Downloader(_episode, options);
+	checkDownloader.check();
 };
 
 Grabber.queueEpisode = function(episode) {
@@ -202,7 +203,6 @@ Grabber.createDownloadWidget = function(episode) {
 	var p = $("<div id=\"pb-" + episode.pid + "\" class=\"download-progressbar\"></div>");
 	var b = $("<div id=\"dlc-" + episode.pid + "\ class=\"download-cancel-button\"></div>");
 	//var b = $("<a href=\"#\" class=\"ui-state-default ui-corner-all\"><span class=\"ui-icon ui-icon-close-thick\" id=\"dlb-"+ episode.pid + "\"></span></a>");
-	$(t).ellipsis();
 	$(p).append(t);
 	$(p).progressbar({value: 0});	
 	$(b).button({ text: false, icons: {primary:'ui-icon-circle-close'} });
@@ -322,7 +322,11 @@ Grabber.removeFromDownloadList = function (episode) {
 };
 
 Grabber.cancelDownload = function (episode) {
-	this.downloadQueue.remove(episode);	
+	try {
+		this.downloadQueue.remove(episode);	
+	} catch (err) {
+		console.log(Titanium.JSON.stringify(err));
+	}
 	if(Grabber.DeleteCancelledDownloads) {
 		Grabber.deleteEpisodeFile(episode);
 	}

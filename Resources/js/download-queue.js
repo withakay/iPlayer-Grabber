@@ -7,16 +7,29 @@ DownloadQueue.prototype.init = function() {
 	var that = this;
 	this.queue = [];
 	this.activeDownloads = [];
-	this.isDownloading = false;
+	
 	this.downloaders = [];
 		
 	$(document).bind("DOWNLOAD_STARTED", function(e, episode) {
-		that.isDownloading = true;
+		
 	});
 	
+	
 	$(document).bind("DOWNLOAD_COMPLETED", function(e, episode) {
-		that.isDownloading = false;
-		if(that.remove(episode) && this.count() < Grabber.MaxActiveDownloads) {
+		console.log("DownloadQueue.DOWNLOAD_COMPLETED");
+		that.remove(episode);
+	});
+	
+	/*
+	$(document).bind("DOWNLOAD_STOPPED", function(e, episode) {
+		console.log("DownloadQueue.DOWNLOAD_STOPPED");
+		that.remove(episode);
+	});
+	*/
+	
+	$(document).bind("DOWNLOAD_REMOVED_FROM_QUEUE", function(e, episode) {
+		console.log("DownloadQueue.DOWNLOAD_REMOVED_FROM_QUEUE");
+		if(that.activeCount() < Grabber.MaxActiveDownloads && that.count() > 0) {
 			that.downloadNext();
 		}		
 	});
@@ -28,6 +41,7 @@ DownloadQueue.prototype.init = function() {
 };
 
 DownloadQueue.prototype.add = function(episode) {
+	console.log("DownloadQueue.add called for " + episode.name);
 	// check the item is not already added
 	for (var i=0; i < this.queue.length; i++) {
 		if(this.queue[i].pid === episode.pid) {
@@ -36,7 +50,7 @@ DownloadQueue.prototype.add = function(episode) {
 		}
 	}	
 	this.queue.push(episode);
-	if(this.isDownloading === false || this.count() < Grabber.MaxActiveDownloads) {
+	if(this.activeCount() < Grabber.MaxActiveDownloads) {
 		this.downloadNext();
 	}
 	$(document).trigger("DOWNLOAD_ADDED_TO_QUEUE", episode);
@@ -44,8 +58,11 @@ DownloadQueue.prototype.add = function(episode) {
 };
 
 DownloadQueue.prototype.remove = function(episode) {
-	var ret1 = false;
+	console.log("DownloadQueue.remove");
+	var ret1 = true;
 	for (var i=0; i < this.queue.length; i++) {
+		console.log(Titanium.JSON.stringify(this.queue[i]));
+		console.log(Titanium.JSON.stringify(episode));
 		if(this.queue[i].pid === episode.pid) {
 			// remove 
 			this.queue.splice(i, 1);
@@ -69,15 +86,20 @@ DownloadQueue.prototype.remove = function(episode) {
 		}
 	}
 	
+	console.log(ret1);
+	
 	if(ret1) {
+		$(document).trigger("DOWNLOAD_REMOVED_FROM_QUEUE", episode);
 		return true;
 	}
 	
-	$(document).trigger("DOWNLOAD_REMOVED_FROM_QUEUE", episode);
 	return false;
 };
 
 DownloadQueue.prototype.downloadNext = function() {
+	
+	console.log("this.activeDownloads.length: " + this.activeCount());
+	console.log("Grabber.MaxActiveDownloads: "  + Grabber.MaxActiveDownloads);
 
 	var options = {
 		DownloadPath: Grabber.DownloadPath, 

@@ -4,9 +4,9 @@ https://developer.appcelerator.com/apidoc/desktop/1.0/Titanium.Process-module
 
 */
 
-function Downloader(episode, options) {
-	this.options = options;
-	this.episode = episode;
+function Downloader(_episode, _options) {
+	this.options = _options;
+	this.episode = _episode;
 	this.progress = 0;
 	this.line = "";
 	this.isDownloading = false;
@@ -45,25 +45,25 @@ Downloader.prototype.check = function() {
 	var args = this.setupArgs();
 	args.push("-n");	
 		
-	this.process = Titanium.Process.createProcess({
+	var checkProcess = Titanium.Process.createProcess({
 		args: args, 
 		env: {"PATH": this.rubyPath}
     });
 
-	console.info(this.process.toString());
+	console.info(checkProcess.toString());
 	var out = "";
-	this.process.setOnReadLine(function(data) {
+	checkProcess.setOnReadLine(function(data) {
 		console.info(Titanium.JSON.stringify(data));
 		if(data) {
 	    	out += data.toString();
 		}
 	});
-	this.process.setOnExit(function(data) {
+	checkProcess.setOnExit(function(data) {
         console.log("process exited with " + data.toString());	
 		$(document).trigger('CHECK_COMPLETED', {episode: that.episode, result: out});
 	});
 		
-	this.process.launch();
+	checkProcess.launch();
 };
 
 Downloader.prototype.setupArgs = function () {
