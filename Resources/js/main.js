@@ -1,3 +1,5 @@
+
+
 var Grabber = {};
 
 Grabber.MaxActiveDownloads = 4;
@@ -248,8 +250,9 @@ Grabber.notify = function(message) {
 
 Grabber.toggleDownloadList = function() {
 	// only show the list if it contains any elements
-	if($("#download-list .download-widget").size() > 0)
-	{
+	console.log("toggleDownloadList");
+	
+	if($("#download-list .download-widget").size() > 0)	{
 		$("#download-list").toggle();
 	} else {
 		$("#download-list").hide();
@@ -267,9 +270,16 @@ Grabber.hideDownloadListIfEmpty = function() {
 Grabber.updateDownloadSummary = function() {
 	console.log("updateDownloadSummary");
 	console.log(Titanium.JSON.stringify(Grabber.downloadQueue));
-	var message = this.downloadQueue.count() === 1 ? 
-		this.downloadQueue.count() + " queued download" : 
-		this.downloadQueue.count() + " queued downloads";
+	var message = "Downloading " + this.downloadQueue.activeCount();
+	
+	if (this.downloadQueue.activeCount() < this.downloadQueue.count()) {
+		message = message + " (Total queued: " + this.downloadQueue.count() + ")";
+	}
+	
+	if (this.downloadQueue.count() === 0) {
+		message = "Download queue empty";
+	}
+			
 	$("#download-summary-button").button({label: message});
 	
 };
@@ -296,12 +306,11 @@ Grabber.setItemCompletedInDownloadList = function(episode) {
 };
 
 Grabber.createDownloadSummaryButton = function () {
-	var b = $("<a id='download-summary-button' href='#'>active downloads: 0</a>");
+	var b = $("<a id='download-summary-button' href='#'>Download queue empty</a>");
 	$("#download-summary").append(b);
 	$(b).button();
 	$(b).width(240);
-	$(b).ellipsis();
-	$("#download-summary").click(function () {
+	$(b).click(function () {
 		Grabber.toggleDownloadList();
 	});
 };
@@ -476,7 +485,7 @@ Grabber.setRubyPath = function () {
 	return false;
 };
 
-Grabber.initAppUpdates = function () {
+Grabber.initAppUpdates = function () { 
 	
 	//
 	// Register for Titanium Developer Updates

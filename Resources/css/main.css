@@ -165,6 +165,10 @@ body {
 	font-size: 0.8em;
 }
 
+.very-small-text {
+	font-size: 0.6em;
+}
+
 #dialog {
 	display: none;
 }

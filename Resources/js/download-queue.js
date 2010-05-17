@@ -97,3 +97,11 @@ DownloadQueue.prototype.downloadNext = function() {
 DownloadQueue.prototype.count = function() {
 	return this.queue.length;
 };
+
+DownloadQueue.prototype.activeCount = function() {
+	return this.activeDownloads.length;
+};
+
+DownloadQueue.prototype.inactiveCount = function() {
+	return this.queue.length - this.activeDownloads.length;
+};
