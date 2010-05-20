@@ -41,6 +41,10 @@ DownloadQueue.prototype.init = function() {
 };
 
 DownloadQueue.prototype.add = function(episode) {
+	if(!episode) {
+		console.log("DownloadQueue.add falsey object passed");
+		return false;
+	}
 	console.log("DownloadQueue.add called for " + episode.name);
 	// check the item is not already added
 	for (var i=0; i < this.queue.length; i++) {
@@ -51,7 +55,10 @@ DownloadQueue.prototype.add = function(episode) {
 	}	
 	this.queue.push(episode);
 	if(this.activeCount() < Grabber.MaxActiveDownloads) {
+		console.log("DownloadQueue.add about to call downloadNext");
 		this.downloadNext();
+	} else {
+		console.log("DownloadQueue.add NOT calling downloadNext");
 	}
 	$(document).trigger("DOWNLOAD_ADDED_TO_QUEUE", episode);
 	return true;
@@ -60,26 +67,30 @@ DownloadQueue.prototype.add = function(episode) {
 DownloadQueue.prototype.remove = function(episode) {
 	console.log("DownloadQueue.remove");
 	var ret1 = true;
-	for (var i=0; i < this.queue.length; i++) {
+	for (var i=0; i < this.queue.length; i++) {		
 		console.log(Titanium.JSON.stringify(this.queue[i]));
-		console.log(Titanium.JSON.stringify(episode));
+		console.log(Titanium.JSON.stringify(episode));		
 		if(this.queue[i].pid === episode.pid) {
-			// remove 
+			console.log("removing from queue");
 			this.queue.splice(i, 1);
 			ret = true;
 			break;
 		}
 	}
+	console.log("this.activeDownloads.length: " + this.activeDownloads.length);
+	console.log(Titanium.JSON.stringify(this.activeDownloads));
 	for (i=0; i < this.activeDownloads.length; i++) {
 		if(this.activeDownloads[i].pid === episode.pid) {
-			// remove 
+			console.log("removing from activeDownloads");
 			this.activeDownloads.splice(i, 1);
 			break;
 		}
 	}
+	console.log("this.downloaders.length: " + this.downloaders.length);
+	console.log(Titanium.JSON.stringify(this.downloaders));	
 	for (i=0; i < this.downloaders.length; i++) {
 		if(this.downloaders[i].episode.pid === episode.pid) {
-			// remove 
+			console.log("remove downloader");
 			this.downloaders[i].stop();
 			this.downloaders.splice(i, 1);
 			break;
@@ -98,6 +109,7 @@ DownloadQueue.prototype.remove = function(episode) {
 
 DownloadQueue.prototype.downloadNext = function() {
 	
+	console.log("this.queue.length: " + this.count());
 	console.log("this.activeDownloads.length: " + this.activeCount());
 	console.log("Grabber.MaxActiveDownloads: "  + Grabber.MaxActiveDownloads);
 
@@ -108,12 +120,15 @@ DownloadQueue.prototype.downloadNext = function() {
 		HTTPProxy: Grabber.HTTPProxy
 	};
 	
-	console.log(Titanium.JSON.stringify(this.queue[this.activeDownloads.length]));	
-	this.activeDownloads.push(this.queue[this.activeDownloads.length]);
-	var episode = this.queue[this.activeDownloads.length-1];
-	var d = new Downloader(episode, options);
-	this.downloaders.push(d);
-	d.start();
+	if(this.count() > this.activeCount()) {
+		console.log(Titanium.JSON.stringify(this.queue[this.activeDownloads.length]));	
+		var episode = this.queue[this.activeDownloads.length];
+		console.log(Titanium.JSON.stringify(episode));	
+		this.activeDownloads.push(episode);
+		var d = new Downloader(episode, options);
+		this.downloaders.push(d);
+		d.start();
+	}
 };
 
 DownloadQueue.prototype.count = function() {

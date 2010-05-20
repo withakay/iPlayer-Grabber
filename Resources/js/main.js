@@ -78,8 +78,7 @@ Grabber.initEventBindings = function() {
 		$(document).bind("CHECK_COMPLETED", function(e, data) {
 			if(data.result && (data.result.indexOf(".mp3") !== -1 || data.result.indexOf(".mp4") !== -1)) {
 				console.log("data.result " + data.result);
-				episode.name = data.result;
-				Grabber.queueEpisodeDialog(episode);
+				Grabber.queueEpisodeDialog({ pid: episode.pid, name: data.result });
 			} else if (data.result) {
 				alert(data.result);			
 			} else {
@@ -122,6 +121,7 @@ Grabber.initEventBindings = function() {
 	
 	$(document).bind("DOWNLOAD_STOPPED", function(e, data) {
 		console.log("DOWNLOAD_STOPPED");
+		Grabber.updateDownloadSummary();
 	});
 	
 	$(document).bind("DOWNLOAD_ADDED_TO_QUEUE", function(e, episode) {
